@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - ExpenseTracker by Yasmine</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; min-height: 100vh; background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); color: white; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
+    nav h1 { color: #e94560; font-size: 1.5rem; }
+    nav h1 span { font-size: 0.75rem; color: #aaa; display: block; }
+    .nav-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .username { color: #aaa; }
+    .lang-btn { padding: 6px 15px; border-radius: 20px; border: 1px solid #aaa; background: transparent; color: #aaa; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
+    .lang-btn:hover { border-color: #e94560; color: #e94560; }
+    .logout-btn { padding: 8px 20px; border-radius: 20px; border: 1px solid #e94560; background: transparent; color: #e94560; cursor: pointer; transition: 0.3s; }
+    .logout-btn:hover { background: #e94560; color: white; }
+    .container { padding: 30px 40px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 25px; text-align: center; }
+    .stat-card .icon { font-size: 2rem; margin-bottom: 10px; }
+    .stat-card h3 { font-size: 0.9rem; color: #aaa; margin-bottom: 5px; }
+    .stat-card p { font-size: 1.5rem; font-weight: bold; color: #e94560; }
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 25px; }
+    .card h2 { margin-bottom: 15px; font-size: 1.1rem; color: #e94560; }
+    input, select { width: 100%; padding: 10px 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-size: 0.9rem; }
+    select option { background: #1a1a2e; }
+    input::placeholder { color: #aaa; }
+    .btn { width: 100%; padding: 11px; border-radius: 8px; border: none; background: #e94560; color: white; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+    .btn:hover { opacity: 0.8; }
+    .btn-green { background: #4caf50; }
+    .depense-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+    .depense-info h4 { font-size: 0.9rem; }
+    .depense-info span { font-size: 0.75rem; color: #aaa; }
+    .depense-montant { color: #e94560; font-weight: bold; }
+    .message { text-align: center; margin-top: 5px; font-size: 0.85rem; }
+    .chart-container { position: relative; height: 220px; }
+    .budget-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .budget-row input { margin-bottom: 0; }
+    .budget-row button { width: auto; padding: 10px 20px; }
+    .alerte-box { border-radius: 10px; padding: 12px; margin-bottom: 10px; font-size: 0.9rem; }
+    .epargne-progress { background: rgba(255,255,255,0.1); border-radius: 20px; height: 10px; margin: 10px 0; overflow: hidden; }
+    .epargne-bar { height: 100%; border-radius: 20px; background: linear-gradient(to right, #4caf50, #e94560); transition: width 0.5s; }
+    @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } nav { padding: 15px 20px; } .container { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>💰 ExpenseTracker <span>by Yasmine</span></h1>
+    <div class="nav-right">
+      <span class="username" id="nomUser"></span>
+      <button class="lang-btn" onclick="changerLangue()">EN</button>
+      <button class="logout-btn" onclick="deconnecter()" id="btnDeconnexion">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="icon">💸</div><h3 id="lbl-total">Total ce mois</h3><p id="totalMois">0 FCFA</p></div>
+      <div class="stat-card"><div class="icon">📋</div><h3 id="lbl-nombre">Nombre de dépenses</h3><p id="nombreDepenses">0</p></div>
+      <div class="stat-card"><div class="icon">🏆</div><h3 id="lbl-categorie">Catégorie principale</h3><p id="categorieTop">-</p></div>
+      <div class="stat-card"><div class="icon">📅</div><h3 id="lbl-derniere">Dernière dépense</h3><p id="derniereDepense">-</p></div>
+    </div>
+
+    <div class="main-grid">
+      <div class="card">
+        <h2 id="lbl-budget-titre">🎯 Mon budget mensuel</h2>
+        <div class="budget-row">
+          <input type="number" id="budget" placeholder="Budget mensuel (FCFA)" />
+          <button class="btn" style="margin-bottom:0;" onclick="sauvegarderBudget()">OK</button>
+        </div>
+        <div id="budgetInfo"></div>
+        <div id="alertesCategorie"></div>
+
+        <h2 style="margin-top:20px;" id="lbl-ajouter">➕ Ajouter une dépense</h2>
+        <input type="number" id="montant" placeholder="Montant (FCFA)" />
+        <select id="categorie">
+          <option value="">Choisir une catégorie</option>
+          <option value="Nourriture">🍔 Nourriture</option>
+          <option value="Transport">🚗 Transport</option>
+          <option value="Loisirs">🎮 Loisirs</option>
+          <option value="Santé">💊 Santé</option>
+          <option value="Vêtements">👗 Vêtements</option>
+          <option value="Education">📚 Education</option>
+          <option value="Autres">📦 Autres</option>
+        </select>
+        <input type="date" id="date" />
+        <input type="text" id="description" placeholder="Description (optionnel)" />
+        <button class="btn" onclick="ajouterDepense()" id="btn-ajouter">Ajouter</button>
+        <div class="message" id="message"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card">
+          <h2 id="lbl-graphique">📊 Dépenses par catégorie</h2>
+          <div class="chart-container"><canvas id="chartCategorie"></canvas></div>
+        </div>
+        <div class="card">
+          <h2 id="lbl-epargne-titre">🏦 Objectif d'épargne</h2>
+          <input type="number" id="objectifEpargne" placeholder="Objectif (FCFA)" />
+          <input type="number" id="epargneActuelle" placeholder="Épargne actuelle (FCFA)" />
+          <button class="btn btn-green" onclick="sauvegarderEpargne()" id="btn-epargne">Enregistrer</button>
+          <div id="epargneInfo"></div>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column: 1 / -1;">
+        <h2 id="lbl-liste">📋 Mes dépenses</h2>
+        <div id="listeDepenses"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://expensetracker-v2.onrender.com/api';
+    let token = localStorage.getItem('token');
+    let user = JSON.parse(localStorage.getItem('user'));
+    let chart = null;
+    let langue = localStorage.getItem('langue') || 'fr';
+
+    if (!token) window.location.href = 'login.html';
+    document.getElementById('nomUser').textContent = user ? user.nom : '';
+
+    const traductions = {
+      fr: {
+        total: 'Total ce mois', nombre: 'Nombre de dépenses', categorie: 'Catégorie principale',
+        derniere: 'Dernière dépense', budgetTitre: '🎯 Mon budget mensuel', ajouter: '➕ Ajouter une dépense',
+        graphique: '📊 Dépenses par catégorie', listeTitre: '📋 Mes dépenses', epargneTitre: '🏦 Objectif d\'épargne',
+        deconnexion: 'Déconnexion', btnAjouter: 'Ajouter', btnEpargne: 'Enregistrer',
+        aucune: 'Aucune dépense pour l\'instant', supprimer: 'Supprimer cette dépense ?',
+        obligatoire: 'Montant, catégorie et date sont obligatoires', ajoutOk: 'Dépense ajoutée !',
+        erreur: 'Erreur serveur', langBtn: 'EN',
+        budgetDepasse: 'Budget dépassé !', attention: 'Attention !', budgetOk: 'Budget OK',
+        utilise: 'utilisé', tropEn: 'Tu dépenses trop en', resteEpargne: 'Il te reste',
+        aEpargner: 'FCFA à épargner', objectifAtteint: '✅ Objectif atteint ! Félicitations 🎉'
+      },
+      en: {
+        total: 'Total this month', nombre: 'Number of expenses', categorie: 'Top category',
+        derniere: 'Last expense', budgetTitre: '🎯 Monthly budget', ajouter: '➕ Add an expense',
+        graphique: '📊 Expenses by category', listeTitre: '📋 My expenses', epargneTitre: '🏦 Savings goal',
+        deconnexion: 'Logout', btnAjouter: 'Add', btnEpargne: 'Save',
+        aucune: 'No expenses yet', supprimer: 'Delete this expense?',
+        obligatoire: 'Amount, category and date are required', ajoutOk: 'Expense added!',
+        erreur: 'Server error', langBtn: 'FR',
+        budgetDepasse: 'Budget exceeded!', attention: 'Warning!', budgetOk: 'Budget OK',
+        utilise: 'used', tropEn: 'You spend too much on', resteEpargne: 'You need',
+        aEpargner: 'FCFA more to save', objectifAtteint: '✅ Goal reached! Congratulations 🎉'
+      }
+    };
+
+    function appliquerLangue() {
+      const t = traductions[langue];
+      document.getElementById('lbl-total').textContent = t.total;
+      document.getElementById('lbl-nombre').textContent = t.nombre;
+      document.getElementById('lbl-categorie').textContent = t.categorie;
+      document.getElementById('lbl-derniere').textContent = t.derniere;
+      document.getElementById('lbl-budget-titre').textContent = t.budgetTitre;
+      document.getElementById('lbl-ajouter').textContent = t.ajouter;
+      document.getElementById('lbl-graphique').textContent = t.graphique;
+      document.getElementById('lbl-liste').textContent = t.listeTitre;
+      document.getElementById('lbl-epargne-titre').textContent = t.epargneTitre;
+      document.getElementById('btnDeconnexion').textContent = t.deconnexion;
+      document.getElementById('btn-ajouter').textContent = t.btnAjouter;
+      document.getElementById('btn-epargne').textContent = t.btnEpargne;
+      document.querySelector('.lang-btn').textContent = t.langBtn;
+    }
+
+    function changerLangue() {
+      langue = langue === 'fr' ? 'en' : 'fr';
+      localStorage.setItem('langue', langue);
+      appliquerLangue();
+      chargerDepenses();
+    }
+
+    appliquerLangue();
+
+    const budgetSauvegarde = localStorage.getItem('budget');
+    if (budgetSauvegarde) document.getElementById('budget').value = budgetSauvegarde;
+    const objectifSauvegarde = localStorage.getItem('objectifEpargne');
+    if (objectifSauvegarde) document.getElementById('objectifEpargne').value = objectifSauvegarde;
+    const epargneActuelleSauvegardee = localStorage.getItem('epargneActuelle');
+    if (epargneActuelleSauvegardee) document.getElementById('epargneActuelle').value = epargneActuelleSauvegardee;
+
+    function deconnecter() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    function sauvegarderBudget() {
+      const budget = document.getElementById('budget').value;
+      if (!budget) return;
+      localStorage.setItem('budget', budget);
+      chargerDepenses();
+    }
+
+    function sauvegarderEpargne() {
+      const objectif = document.getElementById('objectifEpargne').value;
+      const actuelle = document.getElementById('epargneActuelle').value;
+      if (!objectif || !actuelle) return;
+      localStorage.setItem('objectifEpargne', objectif);
+      localStorage.setItem('epargneActuelle', actuelle);
+      afficherEpargne(parseFloat(actuelle), parseFloat(objectif));
+    }
+
+    function afficherEpargne(actuelle, objectif) {
+      const t = traductions[langue];
+      const info = document.getElementById('epargneInfo');
+      const pourcentage = Math.min(Math.round((actuelle / objectif) * 100), 100);
+      const reste = objectif - actuelle;
+      let couleur = '#4caf50';
+      let msg = t.objectifAtteint;
+      if (reste > 0) {
+        couleur = actuelle / objectif >= 0.7 ? '#ff9800' : '#e94560';
+        msg = '💰 ' + t.resteEpargne + ' ' + reste.toLocaleString() + ' ' + t.aEpargner;
+      }
+      info.innerHTML =
+        '<div style="margin-top:10px;">' +
+        '<div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:5px;">' +
+        '<span>' + actuelle.toLocaleString() + ' FCFA</span><span>' + objectif.toLocaleString() + ' FCFA</span></div>' +
+        '<div class="epargne-progress"><div class="epargne-bar" style="width:' + pourcentage + '%;"></div></div>' +
+        '<div style="text-align:center;font-size:0.85rem;color:' + couleur + ';margin-top:5px;">' + msg + '</div></div>';
+    }
+
+    async function ajouterDepense() {
+      const montant = document.getElementById('montant').value;
+      const categorie = document.getElementById('categorie').value;
+      const date = document.getElementById('date').value;
+      const description = document.getElementById('description').value;
+      const message = document.getElementById('message');
+      const t = traductions[langue];
+      if (!montant || !categorie || !date) {
+        message.style.color = '#e94560';
+        message.textContent = t.obligatoire;
+        return;
+      }
+      try {
+        const response = await fetch(API + '/depenses/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ montant, categorie, date, description })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          message.style.color = '#4caf50';
+          message.textContent = t.ajoutOk;
+          document.getElementById('montant').value = '';
+          document.getElementById('description').value = '';
+          chargerDepenses();
+        } else {
+          message.style.color = '#e94560';
+          message.textContent = data.message;
+        }
+      } catch (err) {
+        message.style.color = '#e94560';
+        message.textContent = t.erreur;
+      }
+    }
+
+    async function chargerDepenses() {
+      try {
+        const response = await fetch(API + '/depenses/', { headers: { 'Authorization': 'Bearer ' + token } });
+        const depenses = await response.json();
+        const liste = document.getElementById('listeDepenses');
+        const t = traductions[langue];
+        liste.innerHTML = '';
+        if (depenses.length === 0) {
+          liste.innerHTML = '<p style="color:#aaa;text-align:center;">' + t.aucune + '</p>';
+          return;
+        }
+        let total = 0;
+        const maintenant = new Date();
+        const categories = {};
+        depenses.forEach(function(d) {
+          const dateDepense = new Date(d.date);
+          if (dateDepense.getMonth() === maintenant.getMonth() && dateDepense.getFullYear() === maintenant.getFullYear()) {
+            total += parseFloat(d.montant);
+          }
+          categories[d.categorie] = (categories[d.categorie] || 0) + parseFloat(d.montant);
+          const item = document.createElement('div');
+          item.className = 'depense-item';
+          item.innerHTML =
+            '<div class="depense-info"><h4>' + d.categorie + (d.description ? ' - ' + d.description : '') + '</h4>' +
+            '<span>' + new Date(d.date).toLocaleDateString(langue === 'fr' ? 'fr-FR' : 'en-US') + '</span></div>' +
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+            '<span class="depense-montant">' + parseFloat(d.montant).toLocaleString() + ' FCFA</span>' +
+            '<button style="background:transparent;border:none;cursor:pointer;font-size:1rem;" onclick="supprimerDepense(' + d.id + ')">🗑️</button></div>';
+          liste.appendChild(item);
+        });
+        document.getElementById('totalMois').textContent = total.toLocaleString() + ' FCFA';
+        document.getElementById('nombreDepenses').textContent = depenses.length;
+        const topCategorie = Object.keys(categories).reduce(function(a, b) { return categories[a] > categories[b] ? a : b; }, '');
+        document.getElementById('categorieTop').textContent = topCategorie || '-';
+        const derniere = depenses[0];
+        document.getElementById('derniereDepense').textContent = derniere ? new Date(derniere.date).toLocaleDateString(langue === 'fr' ? 'fr-FR' : 'en-US') : '-';
+
+        const budget = localStorage.getItem('budget');
+        const budgetInfo = document.getElementById('budgetInfo');
+        if (budget) {
+          const pct = Math.round((total / budget) * 100);
+          if (pct >= 100) {
+            budgetInfo.innerHTML = '<div class="alerte-box" style="background:#e9456022;border:1px solid #e94560;color:#e94560;">⚠️ ' + t.budgetDepasse + ' ' + pct + '%</div>';
+          } else if (pct >= 80) {
+            budgetInfo.innerHTML = '<div class="alerte-box" style="background:#ff980022;border:1px solid #ff9800;color:#ff9800;">🔔 ' + t.attention + ' ' + pct + '% ' + t.utilise + '</div>';
+          } else {
+            budgetInfo.innerHTML = '<div class="alerte-box" style="background:#4caf5022;border:1px solid #4caf50;color:#4caf50;">✅ ' + t.budgetOk + ' : ' + pct + '% (' + total.toLocaleString() + ' / ' + parseFloat(budget).toLocaleString() + ' FCFA)</div>';
+          }
+        }
+
+        const alertesDiv = document.getElementById('alertesCategorie');
+        alertesDiv.innerHTML = '';
+        if (total > 0) {
+          Object.keys(categories).forEach(function(cat) {
+            const pct = Math.round((categories[cat] / total) * 100);
+            if (pct >= 30) {
+              alertesDiv.innerHTML += '<div class="alerte-box" style="background:#ff980022;border:1px solid #ff9800;color:#ff9800;">⚠️ ' + t.tropEn + ' ' + cat + ' (' + pct + '%)</div>';
+            }
+          });
+        }
+
+        const objectif = localStorage.getItem('objectifEpargne');
+        const actuelle = localStorage.getItem('epargneActuelle');
+        if (objectif && actuelle) afficherEpargne(parseFloat(actuelle), parseFloat(objectif));
+
+        afficherGraphique(categories);
+      } catch (err) { console.error(err); }
+    }
+
+    function afficherGraphique(categories) {
+      const ctx = document.getElementById('chartCategorie').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categories),
+          datasets: [{ data: Object.values(categories), backgroundColor: ['#e94560','#0f3460','#533483','#e94560aa','#16213e','#4caf50','#ff9800'], borderWidth: 0 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: 'white', font: { size: 11 } } } } }
+      });
+    }
+
+    async function supprimerDepense(id) {
+      if (!confirm(traductions[langue].supprimer)) return;
+      try {
+        await fetch(API + '/depenses/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        chargerDepenses();
+      } catch (err) { console.error(err); }
+    }
+
+    chargerDepenses();
+  </script>
+</body>
+</html>

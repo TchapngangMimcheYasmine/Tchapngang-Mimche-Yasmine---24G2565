@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - ExpenseTracker by Yasmine</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      display: flex; align-items: center; justify-content: center; color: white;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 40px; width: 100%; max-width: 400px;
+    }
+    h2 { text-align: center; margin-bottom: 5px; font-size: 1.8rem; color: #e94560; }
+    .sub { text-align: center; color: #aaa; font-size: 0.8rem; margin-bottom: 25px; }
+    input {
+      width: 100%; padding: 12px 15px; margin-bottom: 15px;
+      border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05); color: white; font-size: 1rem;
+    }
+    input::placeholder { color: #aaa; }
+    button {
+      width: 100%; padding: 13px; border-radius: 10px; border: none;
+      background: #e94560; color: white; font-size: 1rem; font-weight: bold;
+      cursor: pointer; transition: 0.3s;
+    }
+    button:hover { opacity: 0.8; }
+    .link { text-align: center; margin-top: 15px; color: #aaa; font-size: 0.9rem; }
+    .link a { color: #e94560; text-decoration: none; }
+    .message { text-align: center; margin-top: 10px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>💰 Connexion</h2>
+    <p class="sub">ExpenseTracker by Yasmine</p>
+    <input type="email" id="email" placeholder="Votre email" />
+    <input type="password" id="mot_de_passe" placeholder="Mot de passe" />
+    <button onclick="connecter()">Se connecter</button>
+    <div class="message" id="message"></div>
+    <div class="link">Pas de compte ? <a href="register.html">S'inscrire</a></div>
+  </div>
+  <script>
+    const API = 'https://expensetracker-v2.onrender.com/api';
+    async function connecter() {
+      const email = document.getElementById('email').value;
+      const mot_de_passe = document.getElementById('mot_de_passe').value;
+      const message = document.getElementById('message');
+      try {
+        const response = await fetch(API + '/auth/connexion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, mot_de_passe })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          window.location.href = 'dashboard.html';
+        } else {
+          message.style.color = '#e94560';
+          message.textContent = data.message;
+        }
+      } catch (err) {
+        message.style.color = '#e94560';
+        message.textContent = 'Erreur de connexion au serveur';
+      }
+    }
+  </script>
+</body>
+</html>
