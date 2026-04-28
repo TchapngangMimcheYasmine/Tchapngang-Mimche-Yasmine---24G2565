@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion - ExpenseTracker by Yasmine</title>
+  <title>ExpenseTracker by Yasmine</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -38,16 +38,36 @@
 </head>
 <body>
   <div class="card">
-    <h2>💰 Connexion</h2>
-    <p class="sub">ExpenseTracker by Yasmine</p>
-    <input type="email" id="email" placeholder="Votre email" />
-    <input type="password" id="mot_de_passe" placeholder="Mot de passe" />
-    <button onclick="connecter()">Se connecter</button>
+    <h2>💰 ExpenseTracker</h2>
+    <p class="sub">by Yasmine</p>
+    <input type="email" id="email" placeholder="" />
+    <input type="password" id="mot_de_passe" placeholder="" />
+    <button onclick="connecter()" id="btn-submit"></button>
     <div class="message" id="message"></div>
-    <div class="link">Pas de compte ? <a href="register.html">S'inscrire</a></div>
+    <div class="link" id="lien-register"></div>
   </div>
   <script>
     const API = 'https://tchapngang-mimche-yasmine-24g2565-0m0r.onrender.com/api';
+    const langue = localStorage.getItem('langue') || 'fr';
+
+    const t = {
+      fr: {
+        email: 'Votre email', mdp: 'Mot de passe', btn: 'Se connecter',
+        lien: 'Pas de compte ? <a href="register.html">S\'inscrire</a>',
+        erreur: 'Erreur de connexion au serveur', mauvais: 'Email ou mot de passe incorrect'
+      },
+      en: {
+        email: 'Your email', mdp: 'Password', btn: 'Log in',
+        lien: 'No account? <a href="register.html">Sign up</a>',
+        erreur: 'Server connection error', mauvais: 'Incorrect email or password'
+      }
+    };
+
+    document.getElementById('email').placeholder = t[langue].email;
+    document.getElementById('mot_de_passe').placeholder = t[langue].mdp;
+    document.getElementById('btn-submit').textContent = t[langue].btn;
+    document.getElementById('lien-register').innerHTML = t[langue].lien;
+
     async function connecter() {
       const email = document.getElementById('email').value;
       const mot_de_passe = document.getElementById('mot_de_passe').value;
@@ -65,11 +85,11 @@
           window.location.href = 'dashboard.html';
         } else {
           message.style.color = '#e94560';
-          message.textContent = data.message;
+          message.textContent = t[langue].mauvais;
         }
       } catch (err) {
         message.style.color = '#e94560';
-        message.textContent = 'Erreur de connexion au serveur';
+        message.textContent = t[langue].erreur;
       }
     }
   </script>

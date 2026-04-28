@@ -52,7 +52,7 @@
     <h1>💰 ExpenseTracker <span>by Yasmine</span></h1>
     <div class="nav-right">
       <span class="username" id="nomUser"></span>
-      <button class="lang-btn" onclick="changerLangue()">EN</button>
+      <button class="lang-btn" onclick="changerLangue()" id="langBtn">EN</button>
       <button class="logout-btn" onclick="deconnecter()" id="btnDeconnexion">Déconnexion</button>
     </div>
   </nav>
@@ -78,14 +78,14 @@
         <h2 style="margin-top:20px;" id="lbl-ajouter">➕ Ajouter une dépense</h2>
         <input type="number" id="montant" placeholder="Montant (FCFA)" />
         <select id="categorie">
-          <option value="">Choisir une catégorie</option>
-          <option value="Nourriture">🍔 Nourriture</option>
-          <option value="Transport">🚗 Transport</option>
-          <option value="Loisirs">🎮 Loisirs</option>
-          <option value="Santé">💊 Santé</option>
-          <option value="Vêtements">👗 Vêtements</option>
-          <option value="Education">📚 Education</option>
-          <option value="Autres">📦 Autres</option>
+          <option value="" id="opt-choisir">Choisir une catégorie</option>
+          <option value="Nourriture" id="opt-nourriture">🍔 Nourriture</option>
+          <option value="Transport" id="opt-transport">🚗 Transport</option>
+          <option value="Loisirs" id="opt-loisirs">🎮 Loisirs</option>
+          <option value="Santé" id="opt-sante">💊 Santé</option>
+          <option value="Vêtements" id="opt-vetements">👗 Vêtements</option>
+          <option value="Education" id="opt-education">📚 Education</option>
+          <option value="Autres" id="opt-autres">📦 Autres</option>
         </select>
         <input type="date" id="date" />
         <input type="text" id="description" placeholder="Description (optionnel)" />
@@ -129,25 +129,37 @@
         total: 'Total ce mois', nombre: 'Nombre de dépenses', categorie: 'Catégorie principale',
         derniere: 'Dernière dépense', budgetTitre: '🎯 Mon budget mensuel', ajouter: '➕ Ajouter une dépense',
         graphique: '📊 Dépenses par catégorie', listeTitre: '📋 Mes dépenses', epargneTitre: '🏦 Objectif d\'épargne',
-        deconnexion: 'Déconnexion', btnAjouter: 'Ajouter', btnEpargne: 'Enregistrer',
+        deconnexion: 'Déconnexion', btnAjouter: 'Ajouter', btnEpargne: 'Enregistrer', langBtn: 'EN',
         aucune: 'Aucune dépense pour l\'instant', supprimer: 'Supprimer cette dépense ?',
         obligatoire: 'Montant, catégorie et date sont obligatoires', ajoutOk: 'Dépense ajoutée !',
-        erreur: 'Erreur serveur', langBtn: 'EN',
-        budgetDepasse: 'Budget dépassé !', attention: 'Attention !', budgetOk: 'Budget OK',
-        utilise: 'utilisé', tropEn: 'Tu dépenses trop en', resteEpargne: 'Il te reste',
-        aEpargner: 'FCFA à épargner', objectifAtteint: '✅ Objectif atteint ! Félicitations 🎉'
+        erreur: 'Erreur serveur', budgetDepasse: 'Budget dépassé !', attention: 'Attention !',
+        budgetOk: 'Budget OK', utilise: 'utilisé', tropEn: 'Tu dépenses trop en',
+        resteEpargne: 'Il te reste', aEpargner: 'FCFA à épargner',
+        objectifAtteint: '✅ Objectif atteint ! Félicitations 🎉',
+        choisir: 'Choisir une catégorie', nourriture: '🍔 Nourriture', transport: '🚗 Transport',
+        loisirs: '🎮 Loisirs', sante: '💊 Santé', vetements: '👗 Vêtements',
+        education: '📚 Education', autres: '📦 Autres',
+        descPlaceholder: 'Description (optionnel)', montantPlaceholder: 'Montant (FCFA)',
+        budgetPlaceholder: 'Budget mensuel (FCFA)', objectifPlaceholder: 'Objectif (FCFA)',
+        epargneActuellePlaceholder: 'Épargne actuelle (FCFA)'
       },
       en: {
         total: 'Total this month', nombre: 'Number of expenses', categorie: 'Top category',
         derniere: 'Last expense', budgetTitre: '🎯 Monthly budget', ajouter: '➕ Add an expense',
         graphique: '📊 Expenses by category', listeTitre: '📋 My expenses', epargneTitre: '🏦 Savings goal',
-        deconnexion: 'Logout', btnAjouter: 'Add', btnEpargne: 'Save',
+        deconnexion: 'Logout', btnAjouter: 'Add', btnEpargne: 'Save', langBtn: 'FR',
         aucune: 'No expenses yet', supprimer: 'Delete this expense?',
         obligatoire: 'Amount, category and date are required', ajoutOk: 'Expense added!',
-        erreur: 'Server error', langBtn: 'FR',
-        budgetDepasse: 'Budget exceeded!', attention: 'Warning!', budgetOk: 'Budget OK',
-        utilise: 'used', tropEn: 'You spend too much on', resteEpargne: 'You need',
-        aEpargner: 'FCFA more to save', objectifAtteint: '✅ Goal reached! Congratulations 🎉'
+        erreur: 'Server error', budgetDepasse: 'Budget exceeded!', attention: 'Warning!',
+        budgetOk: 'Budget OK', utilise: 'used', tropEn: 'You spend too much on',
+        resteEpargne: 'You need', aEpargner: 'FCFA more to save',
+        objectifAtteint: '✅ Goal reached! Congratulations 🎉',
+        choisir: 'Choose a category', nourriture: '🍔 Food', transport: '🚗 Transport',
+        loisirs: '🎮 Leisure', sante: '💊 Health', vetements: '👗 Clothing',
+        education: '📚 Education', autres: '📦 Others',
+        descPlaceholder: 'Description (optional)', montantPlaceholder: 'Amount (FCFA)',
+        budgetPlaceholder: 'Monthly budget (FCFA)', objectifPlaceholder: 'Goal (FCFA)',
+        epargneActuellePlaceholder: 'Current savings (FCFA)'
       }
     };
 
@@ -165,7 +177,20 @@
       document.getElementById('btnDeconnexion').textContent = t.deconnexion;
       document.getElementById('btn-ajouter').textContent = t.btnAjouter;
       document.getElementById('btn-epargne').textContent = t.btnEpargne;
-      document.querySelector('.lang-btn').textContent = t.langBtn;
+      document.getElementById('langBtn').textContent = t.langBtn;
+      document.getElementById('montant').placeholder = t.montantPlaceholder;
+      document.getElementById('description').placeholder = t.descPlaceholder;
+      document.getElementById('budget').placeholder = t.budgetPlaceholder;
+      document.getElementById('objectifEpargne').placeholder = t.objectifPlaceholder;
+      document.getElementById('epargneActuelle').placeholder = t.epargneActuellePlaceholder;
+      document.getElementById('opt-choisir').textContent = t.choisir;
+      document.getElementById('opt-nourriture').textContent = t.nourriture;
+      document.getElementById('opt-transport').textContent = t.transport;
+      document.getElementById('opt-loisirs').textContent = t.loisirs;
+      document.getElementById('opt-sante').textContent = t.sante;
+      document.getElementById('opt-vetements').textContent = t.vetements;
+      document.getElementById('opt-education').textContent = t.education;
+      document.getElementById('opt-autres').textContent = t.autres;
     }
 
     function changerLangue() {
@@ -240,8 +265,16 @@
       try {
         const response = await fetch(API + '/depenses/', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ montant, categorie, date, description })
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            montant: parseFloat(montant),
+            categorie: categorie,
+            date: date,
+            description: description || ''
+          })
         });
         const data = await response.json();
         if (response.ok) {
@@ -249,25 +282,28 @@
           message.textContent = t.ajoutOk;
           document.getElementById('montant').value = '';
           document.getElementById('description').value = '';
+          document.getElementById('categorie').selectedIndex = 0;
           chargerDepenses();
         } else {
           message.style.color = '#e94560';
-          message.textContent = data.message;
+          message.textContent = JSON.stringify(data);
         }
       } catch (err) {
         message.style.color = '#e94560';
-        message.textContent = t.erreur;
+        message.textContent = t.erreur + ' : ' + err.message;
       }
     }
 
     async function chargerDepenses() {
       try {
-        const response = await fetch(API + '/depenses/', { headers: { 'Authorization': 'Bearer ' + token } });
+        const response = await fetch(API + '/depenses/', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
         const depenses = await response.json();
         const liste = document.getElementById('listeDepenses');
         const t = traductions[langue];
         liste.innerHTML = '';
-        if (depenses.length === 0) {
+        if (!Array.isArray(depenses) || depenses.length === 0) {
           liste.innerHTML = '<p style="color:#aaa;text-align:center;">' + t.aucune + '</p>';
           return;
         }
@@ -326,7 +362,9 @@
         if (objectif && actuelle) afficherEpargne(parseFloat(actuelle), parseFloat(objectif));
 
         afficherGraphique(categories);
-      } catch (err) { console.error(err); }
+      } catch (err) {
+        console.error('Erreur chargement:', err);
+      }
     }
 
     function afficherGraphique(categories) {
@@ -345,7 +383,10 @@
     async function supprimerDepense(id) {
       if (!confirm(traductions[langue].supprimer)) return;
       try {
-        await fetch(API + '/depenses/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        await fetch(API + '/depenses/' + id, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
         chargerDepenses();
       } catch (err) { console.error(err); }
     }

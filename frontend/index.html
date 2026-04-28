@@ -16,6 +16,27 @@
       color: white;
     }
     .hero { text-align: center; padding: 40px; }
+    .lang-selector {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .lang-selector button {
+      padding: 10px 30px;
+      border-radius: 25px;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: transparent;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .lang-selector button.active {
+      background: #e94560;
+      border-color: #e94560;
+    }
+    .lang-selector button:hover { border-color: #e94560; }
     .hero h1 { font-size: 3rem; margin-bottom: 5px; color: #e94560; }
     .hero h1 span { font-size: 1rem; display: block; color: #aaa; margin-bottom: 10px; }
     .hero p { font-size: 1.2rem; margin-bottom: 30px; color: #aaa; }
@@ -49,18 +70,62 @@
 </head>
 <body>
   <div class="hero">
+    <div class="lang-selector">
+      <button id="btn-fr" class="active" onclick="setLangue('fr')">🇫🇷 Français</button>
+      <button id="btn-en" onclick="setLangue('en')">🇬🇧 English</button>
+    </div>
     <h1>💰 ExpenseTracker <span>by Yasmine</span></h1>
-    <p>Gérez vos dépenses intelligemment</p>
+    <p id="hero-desc">Gérez vos dépenses intelligemment</p>
     <div class="btns">
-      <a href="login.html" class="btn-primary">Se connecter</a>
-      <a href="register.html" class="btn-secondary">S'inscrire</a>
+      <a href="login.html" class="btn-primary" id="btn-login">Se connecter</a>
+      <a href="register.html" class="btn-secondary" id="btn-register">S'inscrire</a>
     </div>
     <div class="features">
-      <div class="feature-card"><div class="icon">📊</div><h3>Statistiques</h3><p>Analysez vos habitudes</p></div>
-      <div class="feature-card"><div class="icon">💳</div><h3>Dépenses</h3><p>Suivez chaque centime</p></div>
-      <div class="feature-card"><div class="icon">🎯</div><h3>Épargne</h3><p>Atteignez vos objectifs</p></div>
-      <div class="feature-card"><div class="icon">🔔</div><h3>Alertes</h3><p>Ne dépassez plus</p></div>
+      <div class="feature-card"><div class="icon">📊</div><h3 id="f1">Statistiques</h3><p id="f1d">Analysez vos habitudes</p></div>
+      <div class="feature-card"><div class="icon">💳</div><h3 id="f2">Dépenses</h3><p id="f2d">Suivez chaque centime</p></div>
+      <div class="feature-card"><div class="icon">🎯</div><h3 id="f3">Épargne</h3><p id="f3d">Atteignez vos objectifs</p></div>
+      <div class="feature-card"><div class="icon">🔔</div><h3 id="f4">Alertes</h3><p id="f4d">Ne dépassez plus</p></div>
     </div>
   </div>
+  <script>
+    const t = {
+      fr: {
+        desc: 'Gérez vos dépenses intelligemment',
+        login: 'Se connecter', register: "S'inscrire",
+        f1: 'Statistiques', f1d: 'Analysez vos habitudes',
+        f2: 'Dépenses', f2d: 'Suivez chaque centime',
+        f3: 'Épargne', f3d: 'Atteignez vos objectifs',
+        f4: 'Alertes', f4d: 'Ne dépassez plus'
+      },
+      en: {
+        desc: 'Manage your expenses smartly',
+        login: 'Log in', register: 'Sign up',
+        f1: 'Statistics', f1d: 'Analyze your habits',
+        f2: 'Expenses', f2d: 'Track every penny',
+        f3: 'Savings', f3d: 'Reach your goals',
+        f4: 'Alerts', f4d: 'Never overspend'
+      }
+    };
+
+    function setLangue(lang) {
+      localStorage.setItem('langue', lang);
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('hero-desc').textContent = t[lang].desc;
+      document.getElementById('btn-login').textContent = t[lang].login;
+      document.getElementById('btn-register').textContent = t[lang].register;
+      document.getElementById('f1').textContent = t[lang].f1;
+      document.getElementById('f1d').textContent = t[lang].f1d;
+      document.getElementById('f2').textContent = t[lang].f2;
+      document.getElementById('f2d').textContent = t[lang].f2d;
+      document.getElementById('f3').textContent = t[lang].f3;
+      document.getElementById('f3d').textContent = t[lang].f3d;
+      document.getElementById('f4').textContent = t[lang].f4;
+      document.getElementById('f4d').textContent = t[lang].f4d;
+    }
+
+    const langSauvegardee = localStorage.getItem('langue') || 'fr';
+    setLangue(langSauvegardee);
+  </script>
 </body>
 </html>

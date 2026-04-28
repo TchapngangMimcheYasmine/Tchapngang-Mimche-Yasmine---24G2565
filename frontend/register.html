@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscription - ExpenseTracker by Yasmine</title>
+  <title>ExpenseTracker by Yasmine</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -38,17 +38,42 @@
 </head>
 <body>
   <div class="card">
-    <h2>💰 Inscription</h2>
-    <p class="sub">ExpenseTracker by Yasmine</p>
-    <input type="text" id="nom" placeholder="Votre nom" />
-    <input type="email" id="email" placeholder="Votre email" />
-    <input type="password" id="mot_de_passe" placeholder="Mot de passe" />
-    <button onclick="inscrire()">S'inscrire</button>
+    <h2>💰 ExpenseTracker</h2>
+    <p class="sub">by Yasmine</p>
+    <input type="text" id="nom" placeholder="" />
+    <input type="email" id="email" placeholder="" />
+    <input type="password" id="mot_de_passe" placeholder="" />
+    <button onclick="inscrire()" id="btn-submit"></button>
     <div class="message" id="message"></div>
-    <div class="link">Déjà un compte ? <a href="login.html">Se connecter</a></div>
+    <div class="link" id="lien-login"></div>
   </div>
   <script>
     const API = 'https://tchapngang-mimche-yasmine-24g2565-0m0r.onrender.com/api';
+    const langue = localStorage.getItem('langue') || 'fr';
+
+    const t = {
+      fr: {
+        nom: 'Votre nom', email: 'Votre email', mdp: 'Mot de passe',
+        btn: "S'inscrire",
+        lien: 'Déjà un compte ? <a href="login.html">Se connecter</a>',
+        succes: 'Compte créé avec succès !',
+        erreur: 'Erreur de connexion au serveur'
+      },
+      en: {
+        nom: 'Your name', email: 'Your email', mdp: 'Password',
+        btn: 'Sign up',
+        lien: 'Already have an account? <a href="login.html">Log in</a>',
+        succes: 'Account created successfully!',
+        erreur: 'Server connection error'
+      }
+    };
+
+    document.getElementById('nom').placeholder = t[langue].nom;
+    document.getElementById('email').placeholder = t[langue].email;
+    document.getElementById('mot_de_passe').placeholder = t[langue].mdp;
+    document.getElementById('btn-submit').textContent = t[langue].btn;
+    document.getElementById('lien-login').innerHTML = t[langue].lien;
+
     async function inscrire() {
       const nom = document.getElementById('nom').value;
       const email = document.getElementById('email').value;
@@ -63,7 +88,7 @@
         const data = await response.json();
         if (response.ok) {
           message.style.color = '#4caf50';
-          message.textContent = data.message;
+          message.textContent = t[langue].succes;
           setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
           message.style.color = '#e94560';
@@ -71,7 +96,7 @@
         }
       } catch (err) {
         message.style.color = '#e94560';
-        message.textContent = 'Erreur de connexion au serveur';
+        message.textContent = t[langue].erreur;
       }
     }
   </script>
