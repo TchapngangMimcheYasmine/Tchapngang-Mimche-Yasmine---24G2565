@@ -124,6 +124,20 @@
     if (!token) window.location.href = 'login.html';
     document.getElementById('nomUser').textContent = user ? user.nom : '';
 
+    const traductionCategories = {
+      'Nourriture': { fr: 'Nourriture', en: 'Food' },
+      'Transport': { fr: 'Transport', en: 'Transport' },
+      'Loisirs': { fr: 'Loisirs', en: 'Leisure' },
+      'Santé': { fr: 'Santé', en: 'Health' },
+      'Vêtements': { fr: 'Vêtements', en: 'Clothing' },
+      'Education': { fr: 'Education', en: 'Education' },
+      'Autres': { fr: 'Autres', en: 'Others' }
+    };
+
+    function traduireCategorie(cat) {
+      return traductionCategories[cat] ? traductionCategories[cat][langue] : cat;
+    }
+
     const traductions = {
       fr: {
         total: 'Total ce mois', nombre: 'Nombre de dépenses', categorie: 'Catégorie principale',
@@ -311,21 +325,23 @@
         const maintenant = new Date();
         const categories = {};
         depenses.forEach(function(d) {
+          const catTraduite = traduireCategorie(d.categorie);
           const dateDepense = new Date(d.date);
           if (dateDepense.getMonth() === maintenant.getMonth() && dateDepense.getFullYear() === maintenant.getFullYear()) {
             total += parseFloat(d.montant);
           }
-          categories[d.categorie] = (categories[d.categorie] || 0) + parseFloat(d.montant);
+          categories[catTraduite] = (categories[catTraduite] || 0) + parseFloat(d.montant);
           const item = document.createElement('div');
           item.className = 'depense-item';
           item.innerHTML =
-            '<div class="depense-info"><h4>' + d.categorie + (d.description ? ' - ' + d.description : '') + '</h4>' +
+            '<div class="depense-info"><h4>' + catTraduite + (d.description ? ' - ' + d.description : '') + '</h4>' +
             '<span>' + new Date(d.date).toLocaleDateString(langue === 'fr' ? 'fr-FR' : 'en-US') + '</span></div>' +
             '<div style="display:flex;align-items:center;gap:10px;">' +
             '<span class="depense-montant">' + parseFloat(d.montant).toLocaleString() + ' FCFA</span>' +
             '<button style="background:transparent;border:none;cursor:pointer;font-size:1rem;" onclick="supprimerDepense(' + d.id + ')">🗑️</button></div>';
           liste.appendChild(item);
         });
+
         document.getElementById('totalMois').textContent = total.toLocaleString() + ' FCFA';
         document.getElementById('nombreDepenses').textContent = depenses.length;
         const topCategorie = Object.keys(categories).reduce(function(a, b) { return categories[a] > categories[b] ? a : b; }, '');
